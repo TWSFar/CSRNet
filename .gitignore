@@ -1,0 +1,12 @@
+# compile file of python
+*.py[cod]
+_pycache_
+
+# My configurations:
+data/
+work_dirs/
+weights/
+.vscode/
+debug/
+log/
+.debug.py
