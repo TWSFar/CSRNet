@@ -1,7 +1,4 @@
 import torch
-import torch.nn as nn
-import torch.nn.init as init
-import numpy as np
 
 
 def create_vis_plot(vis, X_, Y_, title_, legend_):
@@ -22,8 +19,8 @@ def update_vis_plot(vis, item, loss, window, update_type):
         update_type = True
 
     vis.line(
-        X = torch.ones((1, len(loss))).cpu() * item,
-        Y = torch.Tensor(loss).unsqueeze(0).cpu(),
-        win = window,
-        update = update_type
+        X=torch.ones((1, len(loss))).cpu() * item,
+        Y=torch.Tensor(loss).unsqueeze(0).cpu(),
+        win=window,
+        update=update_type
     )
