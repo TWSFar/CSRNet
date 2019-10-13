@@ -1,17 +1,19 @@
 import time
 import torch
 import os.path as osp
+from pprint import pprint
 
 
 class Config:
     # data
+    dataset = "SHTB"
     root_dir = "/home/twsf/data/Shanghai/part_B_final"
     train_dir = osp.join(root_dir, "train_data")
     test_dir = osp.join(root_dir, "test_data")
     pre = '/home/twsf/work/CSRNet/work_dirs/SHT_B_model_best.pth.tar'
 
     # train
-    batch_size = 6
+    batch_size = 9
     input_size = (768, 576)  # (x, y)
     start_epoch = 0
     epochs = 200
@@ -31,14 +33,29 @@ class Config:
 
     scales = [1, 1, 1, 1]
     seed = time.time()
-    print_freq = 30
 
     use_mulgpu = False
     gpu_id = [0, 1, 2]
     device = torch.device('cuda:0')
     visualize = True
     resume = False
-    plot_every = 1  # every 1 batch plot
+    print_freq = 10
+    plot_every = 10  # every n batch plot
+
+    def _parse(self, kwargs):
+        state_dict = self._state_dict()
+        for k, v in kwargs.items():
+            if k not in state_dict:
+                raise ValueError('UnKnown Option: "--%s"' % k)
+            setattr(self, k, v)
+
+        print('======user config========')
+        pprint(self._state_dict())
+        print('==========end============')
+
+    def _state_dict(self):
+        return {k: getattr(self, k) for k, _ in Config.__dict__.items()
+                if not k.startswith('_')}
 
 
 opt = Config()

@@ -1,13 +1,11 @@
 import torch
 from torchvision import models
 
+class A:
+    def fun1(self):
+        print('a')
+    @staticmethod
+    def fun2():
+        A().fun1()
 
-mod = models.vgg16(pretrained=False)
-mm = torch.load("/home/twsf/.cache/torch/checkpoints/vgg16-397923af.pth")
-iterm = mod.state_dict()
-iterm2 = iterm.items()
-for i in range(len(iterm2)):
-    p = mod.state_dict()
-    p2 = p1[1]
-    p3 = p2.data
-pass
+A().fun2()

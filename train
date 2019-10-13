@@ -1,0 +1,55 @@
+[1mNAME[0m
+    train.py
+
+[1mSYNOPSIS[0m
+    train.py [4mGROUP[0m | [4mCOMMAND[0m
+
+[1mGROUPS[0m
+    [1m[4mGROUP[0m[0m is one of the following:
+
+     os
+       OS routines for NT or Posix depending on what system we're on.
+
+     fire
+       The Python Fire module.
+
+     time
+       This module provides various functions to manipulate time values.
+
+     opt
+
+     torch
+       The torch package contains data structures for multi-dimensional tensors and mathematical operations over these are defined. Additionally, it provides many utilities for efficient serializing of Tensors and arbitrary types, and other useful utilities.
+
+     nn
+
+     multiprocessing
+
+[1mCOMMANDS[0m
+    [1m[4mCOMMAND[0m[0m is one of the following:
+
+     tqdm
+       Decorate an iterable object, returning an iterator which acts exactly like the original iterable, but prints a dynamically updating progressbar every time a value is requested.
+
+     SHTDataset
+       An abstract class representing a Dataset.
+
+     TensorboardSummary
+
+     CSRNet
+       Base class for all neural network modules.
+
+     Saver
+
+     DataLoader
+       Data loader. Combines a dataset and a sampler, and provides single- or multi-process iterators over the dataset.
+
+     Trainer
+
+     adjust_learning_rate
+       Sets the learning rate to the initial LR decayed by 10 every 30 epochs
+
+     AverageMeter
+       Computes and stores the average and current value
+
+     train

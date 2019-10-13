@@ -1,0 +1,29 @@
+dataset:SHTB
+root_dir:/home/twsf/data/Shanghai/part_B_final
+train_dir:/home/twsf/data/Shanghai/part_B_final/train_data
+test_dir:/home/twsf/data/Shanghai/part_B_final/test_data
+pre:/home/twsf/work/CSRNet/work_dirs/SHT_B_model_best.pth.tar
+batch_size:9
+input_size:(768, 576)
+start_epoch:0
+epochs:200
+workers:8
+mean:[0.452016860247, 0.447249650955, 0.431981861591]
+std:[0.23242045939, 0.224925786257, 0.221840232611]
+log_para:100.0
+downrate:8
+gtdownrate:8
+original_lr:1e-05
+lr:1e-05
+momentum:0.995
+decay:0.0005
+steps:[-1, 1, 100, 150]
+scales:[1, 1, 1, 1]
+seed:1570983098.6935139
+use_mulgpu:True
+gpu_id:[0, 1, 2]
+device:cuda:0
+visualize:True
+resume:False
+print_freq:10
+plot_every:10

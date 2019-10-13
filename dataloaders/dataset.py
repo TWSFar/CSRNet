@@ -54,6 +54,7 @@ class SHTDataset(Dataset):
         self.img_dir = osp.join(self.data_dir, 'images')
         self.img_list = [file for file in os.listdir(self.img_dir)]
         self.train = train
+        self.img_number = len(self.img_list)
 
         # transform
         self.stf = transfrom(self.train)

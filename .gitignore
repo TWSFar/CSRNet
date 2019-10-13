@@ -10,3 +10,4 @@ weights/
 debug/
 log/
 .debug.py
+run/
