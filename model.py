@@ -9,9 +9,10 @@ class CSRNet(nn.Module):
         self.frontend_feat = [64, 64, 'M', 128, 128, 'M',
                               256, 256, 256, 'M', 512, 512, 512]
         self.backend_feat = [512, 512, 512, 256, 128, 64]
-        self.frontend = self.make_layers(self.frontend_feat)
+        self.frontend = self.make_layers(self.frontend_feat, batch_norm=True)
         self.backend = self.make_layers(self.backend_feat,
                                         in_channels=512,
+                                        batch_norm=True,
                                         dilation=True)
         self.output_layer = nn.Conv2d(64, 1, kernel_size=1)
 

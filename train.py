@@ -1,6 +1,7 @@
 import os
 import fire
 import time
+import numpy as np
 from tqdm import tqdm
 # import visdom
 
@@ -51,12 +52,6 @@ class Trainer(object):
 
         model = CSRNet()
         self.model = model.to(opt.device)
-        if opt.use_mulgpu:
-            self.model = torch.nn.DataParallel(self.model, device_ids=opt.gpu_id)
-        self.criterion = nn.MSELoss(reduction='mean').to(opt.device)
-        self.optimizer = torch.optim.SGD(self. model.parameters(), opt.lr,
-                                         momentum=opt.momentum,
-                                         weight_decay=opt.decay)
         if opt.resume:
             if os.path.isfile(opt.pre):
                 print("=> loading checkpoint '{}'".format(opt.pre))
@@ -64,13 +59,19 @@ class Trainer(object):
                 opt.start_epoch = checkpoint['epoch']
                 self.best_pred = checkpoint['best_pred']
                 self.model.load_state_dict(checkpoint['state_dict'])
-                self.optimizer.load_state_dict(checkpoint['optimizer'])
                 print("=> loaded checkpoint '{}' (epoch {})"
                       .format(opt.pre, checkpoint['epoch']))
             else:
                 print("=> no checkpoint found at '{}'".format(opt.pre))
+        if opt.use_mulgpu:
+            self.model = torch.nn.DataParallel(self.model, device_ids=opt.gpu_id)
+        self.criterion = nn.MSELoss(reduction='mean').to(opt.device)
+        self.optimizer = torch.optim.SGD(self. model.parameters(), opt.lr,
+                                         momentum=opt.momentum,
+                                         weight_decay=opt.decay)
 
     def train(self, epoch):
+        self.model.train()
         losses = AverageMeter()
         batch_time = AverageMeter()
         data_time = AverageMeter()
@@ -78,9 +79,9 @@ class Trainer(object):
         print('epoch %d, processed %d samples, lr %.10f' %
               (epoch, epoch * len(self.train_loader.dataset), opt.lr))
 
-        start = time.time()
-
+        end = time.time()
         for i, (img, target, _)in enumerate(self.train_loader):
+            data_time.update(time.time() - end)
             img = img.to(opt.device)
             target = target.type(torch.FloatTensor).unsqueeze(1).to(opt.device)
 
@@ -92,7 +93,7 @@ class Trainer(object):
             loss.backward()
             self.optimizer.step()
 
-            batch_time.update(time.time() - start)
+            batch_time.update(time.time() - end)
 
             # visualize
             # if opt.visualize:
@@ -113,38 +114,44 @@ class Trainer(object):
                         data_time=data_time, loss=losses))
 
     def validate(self, epoch):
-        print('begin val')
+        maes = AverageMeter()
+        mses = AverageMeter()
         self.model.eval()
-        mae = 0
+
         for i, (img, target, scale) in enumerate(tqdm(self.test_loader)):
             img = img.to(opt.device)
             output = self.model(img)
-            mae += abs(output.data.sum()-target.sum().type(torch.FloatTensor).to(opt.device))
+            output = output.data.cpu().numpy()
+            target = target.data.numpy()
+            for i_img in range(output.shape[0]):
+                pred_count = np.sum(output[i_img]) / opt.log_para
+                gt_count = np.sum(target[i_img]) / opt.log_para
+                maes.update(abs(gt_count - pred_count))
+                mses.update((gt_count - pred_count) ** 2)
 
-        mae = mae / self.test_dataset.img_number
+        mae = maes.avg
+        mse = np.sqrt(mses.avg)
 
         # visualize
         # if opt.visualize:
         #     update_vis_plot(vis, epoch, [mae], val_plot, 'append')
-        self.writer.add_scalar('val/total_loss_epoch', mae, epoch)
-        print(' * MAE {mae:.3f} '.format(mae=mae))
+        self.writer.add_scalar('val/mae', mae, epoch)
+        self.writer.add_scalar('val/mse', mse, epoch)
+        print(' * MAE {mae:.3f} | * MSE {mse:.3f}'.format(mae=mae, mse=mse))
 
         return mae
 
 
 def adjust_learning_rate(optimizer, epoch):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-    opt.lr = opt.original_lr
-    for i in range(len(opt.steps)):
-        scale = opt.scales[i] if i < len(opt.scales) else 1
-        if epoch >= opt.steps[i]:
-            opt.lr = opt.lr * scale
-            if epoch == opt.steps[i]:
-                break
-        else:
+    lr = opt.lr
+    for i in opt.steps:
+        if epoch / opt.epochs > i:
+            lr = lr * (opt.scales ** (i + 1))
             break
+
     for param_group in optimizer.param_groups:
-        param_group['lr'] = opt.lr
+        param_group['lr'] = lr
 
 
 class AverageMeter(object):
@@ -172,15 +179,14 @@ def train(**kwargs):
         adjust_learning_rate(trainer.optimizer, epoch)
 
         # train
-        trainer.model.train()
         trainer.train(epoch)
 
         # val
-        prec1 = trainer.validate(epoch)
+        mae = trainer.validate(epoch)
 
-        is_best = prec1 < trainer.best_pred
-        trainer.best_pred = min(prec1, trainer.best_pred)
-        print(' * best MAE {mae:.3f} '.format(mae=trainer.best_pred))
+        is_best = mae < trainer.best_pred
+        trainer.best_pred = min(mae, trainer.best_pred)
+        print(' * best MAE {mae:.3f}'.format(mae=trainer.best_pred))
         if (epoch % 20 == 0 and epoch != 0) or is_best:
             trainer.saver.save_checkpoint({
                 'epoch': epoch + 1,
@@ -192,5 +198,5 @@ def train(**kwargs):
 
 
 if __name__ == '__main__':
+    train()
     fire.Fire()
-    # train()

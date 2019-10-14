@@ -66,15 +66,19 @@ class TensorboardSummary(object):
 
     def visualize_image(self, writer, dataset, image, target, output, global_step):
         # plot_result(image, target, output)
+        # show_output = output[0].cpu().permute(1, 2, 0).data.numpy()
+        # if show_output.max() > 1:
+        #     print("..................................")
+        #     print("global_step {}".format(global_step))
 
         # images
         grid_image = make_grid(image[:2].clone().cpu().data, nrow=3, normalize=True)
         writer.add_image('Image', grid_image, global_step)
 
-        # target
-        grid_image = make_grid(target[:2].clone().cpu(), nrow=3, normalize=True)
-        writer.add_image('Groundtruth density', grid_image, global_step)
-
         # output
-        grid_image = make_grid(output[:2].clone().cpu(), nrow=3, normalize=True)
-        writer.add_image('Predicted density', grid_image, global_step)
+        grid_output = make_grid(output[:2].clone().cpu(), nrow=3, normalize=True)
+        writer.add_image('Predicted density', grid_output, global_step)
+
+        # target
+        grid_target = make_grid(target[:2].clone().cpu(), nrow=3, normalize=True)
+        writer.add_image('Groundtruth density', grid_target, global_step)
