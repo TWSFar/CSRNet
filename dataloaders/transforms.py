@@ -85,7 +85,7 @@ class CenterCrop(object):
 
 class FreeScale(object):
     def __init__(self, size):
-        self.size = size  # (h, w)
+        self.size = size  # (w, h)
 
     def __call__(self, img, den):
         img = cv2.resize(img, self.size)
