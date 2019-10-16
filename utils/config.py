@@ -9,12 +9,12 @@ class Config:
     dataset = "Visdrone"
     # root_dir = "/home/twsf/data/Shanghai/part_B_final"
     root_dir = '/home/twsf/data/Visdrone/'
-    train_dir = osp.join(root_dir, "VisDrone2018-DET-train")
-    test_dir = osp.join(root_dir, "VisDrone2018-DET-val")
-    pre = None
+    train_dir = osp.join(root_dir, "VisDrone2019-DET-train")
+    test_dir = osp.join(root_dir, "VisDrone2019-DET-val")
+    pre = '/home/twsf/work/CSRNet/run/Visdrone/experiment_0/checkpoint.path.tar'
 
     # train
-    batch_size = 3
+    batch_size = 16
     # SHTB
     # input_size = (768, 576)  # (x, y)
     # Visdrone
@@ -39,7 +39,7 @@ class Config:
     scales = 0.3
 
     use_mulgpu = False
-    gpu_id = [0, 1, 2]
+    gpu_id = [0, 1, 2, 3]
     device = torch.device('cuda:0')
     visualize = True
     resume = False
