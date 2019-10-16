@@ -41,11 +41,10 @@ def gaussian_filter_density(gt):
 
 
 def main():
-    # part_B
     root = "/home/twsf/data/Shanghai/"
-    part_B_train = os.path.join(root, 'part_B_final/train_data', 'images')
-    part_B_test = os.path.join(root, 'part_B_final/test_data', 'images')
-    path_sets = [part_B_train, part_B_test]
+    part_A_train = os.path.join(root, 'part_A_final/train_data', 'images')
+    part_A_test = os.path.join(root, 'part_A_final/test_data', 'images')
+    path_sets = [part_A_train, part_A_test]
 
     img_paths = []
     for path in path_sets:
@@ -68,10 +67,21 @@ def main():
         for i in range(0, len(gt)):
             if int(gt[i][1]) < img.shape[0] and int(gt[i][0]) < img.shape[1]:
                 k[int(gt[i][1]), int(gt[i][0])] = 1
-        k = gaussian_filter(k, 15)
+        k = gaussian_filter_density(k)
         with h5py.File(img_path.replace('.jpg', '.h5').
                        replace('images', 'density_map'), 'w') as hf:
             hf['density'] = k
+
+    # show result
+    plt.imshow(Image.open(img_paths[2]))
+    plt.show()
+    gt_file = h5py.File(img_paths[0].
+                        replace('.jpg', '.h5').
+                        replace('images', 'ground_truth'), 'r')
+    groundtruth = np.asarray(gt_file['density'])
+    plt.imshow(groundtruth, cmap=CM.jet)
+    plt.show()
+    print(np.sum(groundtruth))  # don't mind this slight variation
 
 
 if __name__ == '__main__':

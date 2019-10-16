@@ -198,5 +198,5 @@ def train(**kwargs):
 
 
 if __name__ == '__main__':
-    train()
+    # train()
     fire.Fire()

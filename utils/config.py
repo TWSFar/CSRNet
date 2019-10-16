@@ -6,14 +6,14 @@ from pprint import pprint
 
 class Config:
     # data
-    dataset = "SHTB"
-    root_dir = "/home/twsf/data/Shanghai/part_B_final"
+    dataset = "SHTA"
+    root_dir = "/home/twsf/data/Shanghai/part_A_final"
     train_dir = osp.join(root_dir, "train_data")
     test_dir = osp.join(root_dir, "test_data")
     pre = '/home/twsf/work/CSRNet/run/SHTB/model_best.pth.tar'
 
     # train
-    batch_size = 3
+    batch_size = 6
     input_size = (768, 576)  # (x, y)
     start_epoch = 0
     epochs = 201
@@ -21,7 +21,7 @@ class Config:
     mean = [0.452016860247, 0.447249650955, 0.431981861591]
     std = [0.23242045939, 0.224925786257, 0.221840232611]
     log_para = 100.  # density need a factor
-    downrate = 8
+    downrate = 4
     gtdownrate = 8
 
     # param for optimizer
