@@ -1,6 +1,6 @@
 # compile file of python
 *.py[cod]
-_pycache_
+_pycache_/
 
 # My configurations:
 data/
