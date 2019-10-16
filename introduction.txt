@@ -1,0 +1,4 @@
+两个分支 master 和 visdrone
+切换git checkout <分支名>
+
+当前代码最好保持在master 操作, visdrone分支的操作最好去k40
