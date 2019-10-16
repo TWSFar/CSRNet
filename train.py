@@ -5,7 +5,7 @@ import numpy as np
 from tqdm import tqdm
 # import visdom
 
-from dataloaders.dataset import SHTDataset
+from dataloaders.datasets.Visdrone import VisdroneDataset
 from utils.visualization import TensorboardSummary
 from model import CSRNet
 from utils.saver import Saver
@@ -14,8 +14,8 @@ from utils.config import opt
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
-import multiprocessing
-multiprocessing.set_start_method('spawn', True)
+# import multiprocessing
+# multiprocessing.set_start_method('spawn', True)
 
 
 class Trainer(object):
@@ -36,13 +36,13 @@ class Trainer(object):
             self.writer = self.summary.create_summary()
 
         # Dataset dataloader
-        self.train_dataset = SHTDataset(opt.train_dir, train=True)
+        self.train_dataset = VisdroneDataset(opt.train_dir, train=True)
         self.train_loader = DataLoader(
             self.train_dataset,
             num_workers=opt.workers,
             shuffle=True,
             batch_size=opt.batch_size)   # must be 1
-        self.test_dataset = SHTDataset(opt.test_dir, train=False)
+        self.test_dataset = VisdroneDataset(opt.test_dir, train=False)
         self.test_loader = torch.utils.data.DataLoader(
             self.test_dataset,
             shuffle=False,
@@ -198,5 +198,5 @@ def train(**kwargs):
 
 
 if __name__ == '__main__':
-    train()
-    fire.Fire()
+    # train()
+    fire.Fire(train)
