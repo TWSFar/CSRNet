@@ -10,7 +10,7 @@ class Config:
     root_dir = "/home/twsf/data/Shanghai/part_A_final"
     train_dir = osp.join(root_dir, "train_data")
     test_dir = osp.join(root_dir, "test_data")
-    pre = '/home/twsf/work/CSRNet/run/SHTB/model_best.pth.tar'
+    pre = None
 
     # train
     batch_size = 6
