@@ -57,7 +57,7 @@ class Trainer(object):
             if os.path.isfile(opt.pre):
                 print("=> loading checkpoint '{}'".format(opt.pre))
                 checkpoint = torch.load(opt.pre)
-                opt.start_epoch = checkpoint['epoch'] + 1
+                opt.start_epoch = checkpoint['epoch']
                 self.best_pred = checkpoint['best_pred']
                 self.model.load_state_dict(checkpoint['state_dict'])
                 print("=> loaded checkpoint '{}' (epoch {})"
@@ -186,7 +186,7 @@ def train(**kwargs):
         print(' * best MAE {mae:.3f}'.format(mae=trainer.best_pred))
         if (epoch % 20 == 0 and epoch != 0) or is_best:
             trainer.saver.save_checkpoint({
-                'epoch': epoch,
+                'epoch': epoch + 1,
                 'state_dict': trainer.model.module.state_dict() if opt.use_mulgpu
                 else trainer.model.state_dict(),
                 'best_pred': trainer.best_pred,
