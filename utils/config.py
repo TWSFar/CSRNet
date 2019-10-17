@@ -10,7 +10,7 @@ class Config:
     root_dir = "/home/twsf/data/Shanghai/part_A_final"
     train_dir = osp.join(root_dir, "train_data")
     test_dir = osp.join(root_dir, "test_data")
-    pre = None
+    pre = '/home/twsf/work/CSRNet/run/SHTA/model_best.pth.tar'
 
     # train
     batch_size = 6
@@ -25,12 +25,12 @@ class Config:
     gtdownrate = 8
 
     # param for optimizer
-    original_lr = 0.0005
     lr = 0.00005
+    # lr_scheduler = 'poly'  # ['poly', 'step', 'cos']
     momentum = 0.995
     decay = 5*1e-4
     steps = [0.8, 0.9]
-    scales = 0.3
+    scales = 0.1
 
     use_mulgpu = False
     gpu_id = [0, 1, 2]
