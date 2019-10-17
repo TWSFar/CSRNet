@@ -145,8 +145,8 @@ class Trainer(object):
 def adjust_learning_rate(optimizer, epoch):
     """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
     lr = opt.lr
-    for i in opt.steps:
-        if epoch / opt.epochs > i:
+    for i, f in enumerate(opt.steps):
+        if epoch / opt.epochs > f:
             lr = lr * (opt.scales ** (i + 1))
             break
 
@@ -199,4 +199,4 @@ def train(**kwargs):
 
 if __name__ == '__main__':
     # train()
-    fire.Fire()
+    fire.Fire(train)

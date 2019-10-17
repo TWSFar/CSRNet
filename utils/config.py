@@ -20,7 +20,7 @@ class Config:
     workers = 8
     mean = [0.452016860247, 0.447249650955, 0.431981861591]
     std = [0.23242045939, 0.224925786257, 0.221840232611]
-    log_para = 100.  # density need a factor
+    log_para = 10.  # density need a factor
     downrate = 4
     gtdownrate = 8
 
