@@ -14,6 +14,7 @@ from utils.config import opt
 import torch
 import torch.nn as nn
 from torch.utils.data import DataLoader
+import torch.optim.lr_scheduler as lr_scheduler
 # import multiprocessing
 # multiprocessing.set_start_method('spawn', True)
 
@@ -69,6 +70,12 @@ class Trainer(object):
         self.optimizer = torch.optim.SGD(self. model.parameters(), opt.lr,
                                          momentum=opt.momentum,
                                          weight_decay=opt.decay)
+        # Define lr scheduler
+        self.scheduler = lr_scheduler.MultiStepLR(
+            self.optimizer,
+            milestones=[round(opt.epochs * x) for x in opt.steps],
+            gamma=opt.scales)
+        self.scheduler.last_epoch = opt.start_epoch - 1
 
     def train(self, epoch):
         self.model.train()
@@ -77,7 +84,8 @@ class Trainer(object):
         data_time = AverageMeter()
         num_img_tr = len(self.train_loader)
         print('epoch %d, processed %d samples, lr %.10f' %
-              (epoch, epoch * len(self.train_loader.dataset), opt.lr))
+              (epoch, epoch * len(self.train_loader.dataset),
+               self.optimizer.param_groups[0]['lr']))
 
         end = time.time()
         for i, (img, target, _)in enumerate(self.train_loader):
@@ -109,9 +117,11 @@ class Trainer(object):
                       'Data {data_time.val:.3f} ({data_time.avg:.3f})\t'
                       'Loss {loss.val:.4f} ({loss.avg:.4f})\t'
                       .format(
-                        epoch, i, len(self.train_loader),
+                        epoch, i+opt.print_freq, len(self.train_loader),
                         batch_time=batch_time,
                         data_time=data_time, loss=losses))
+        # Update scheduler
+        self.scheduler.step()
 
     def validate(self, epoch):
         maes = AverageMeter()
@@ -142,18 +152,6 @@ class Trainer(object):
         return mae
 
 
-def adjust_learning_rate(optimizer, epoch):
-    """Sets the learning rate to the initial LR decayed by 10 every 30 epochs"""
-    lr = opt.lr
-    for i in opt.steps:
-        if epoch / opt.epochs > i:
-            lr = lr * (opt.scales ** (i + 1))
-            break
-
-    for param_group in optimizer.param_groups:
-        param_group['lr'] = lr
-
-
 class AverageMeter(object):
     """Computes and stores the average and current value"""
     def __init__(self):
@@ -176,8 +174,6 @@ def train(**kwargs):
     opt._parse(kwargs)
     trainer = Trainer()
     for epoch in range(opt.start_epoch, opt.epochs):
-        adjust_learning_rate(trainer.optimizer, epoch)
-
         # train
         trainer.train(epoch)
 

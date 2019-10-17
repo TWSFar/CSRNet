@@ -11,27 +11,20 @@ class Config:
     root_dir = '/home/twsf/data/Visdrone/'
     train_dir = osp.join(root_dir, "VisDrone2019-DET-train")
     test_dir = osp.join(root_dir, "VisDrone2019-DET-val")
-    pre = '/home/twsf/work/CSRNet/run/Visdrone/experiment_0/checkpoint.path.tar'
+    pre = '/home/twsf/work/CSRNet/run/Visdrone/experiment_1/checkpoint.path.tar'
 
     # train
     batch_size = 16
-    # SHTB
-    # input_size = (768, 576)  # (x, y)
-    # Visdrone
     input_size = (640, 480)  # (x, y)
     start_epoch = 0
     epochs = 201
     workers = 4
-    # # SHTB
-    # mean = [0.452016860247, 0.447249650955, 0.431981861591]
-    # std = [0.23242045939, 0.224925786257, 0.221840232611]
 
     log_para = 1.  # density need a factor
     downrate = 8
     gtdownrate = 8
 
     # param for optimizer
-    original_lr = 0.0005
     lr = 0.0002
     momentum = 0.995
     decay = 5*1e-4
